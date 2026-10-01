@@ -48,11 +48,17 @@ class AuthenticationMixin:
                 self._session = aiohttp.ClientSession(connector=connector)
                 self._hass_session = False
 
-        # Extract base host without port if specified
-        base_host = self.host.split(":")[0]
-
-        # We'll use port 443 explicitly for all UniFi connections
-        port = 443
+        # Extract base host, respecting an explicit host:port if provided;
+        # otherwise fall back to self.port (set from config, default 443).
+        if ":" in self.host:
+            base_host, _, host_port_str = self.host.partition(":")
+            try:
+                port = int(host_port_str)
+            except ValueError:
+                port = self.port
+        else:
+            base_host = self.host
+            port = self.port
 
         LOGGER.debug("Using base_host=%s and port=%d for UniFi connection", base_host, port)
 

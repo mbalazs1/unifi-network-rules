@@ -13,7 +13,7 @@ from aiounifi.errors import (
     Unauthorized,
 )
 from homeassistant import config_entries
-from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME, CONF_VERIFY_SSL
+from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_PORT, CONF_USERNAME, CONF_VERIFY_SSL
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
 
@@ -40,6 +40,7 @@ DEFAULT_UPDATE_INTERVAL_MINUTES = DEFAULT_UPDATE_INTERVAL // 60
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST): str,
+        vol.Optional(CONF_PORT, default=443, description="Controller API port (443 for UniFi OS, 8443 for the standalone Network Application)"): int,
         vol.Required(CONF_USERNAME): str,
         vol.Required(CONF_PASSWORD): str,
         vol.Optional(CONF_SITE, default=DEFAULT_SITE): str,
@@ -61,6 +62,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> None:
         data[CONF_PASSWORD],
         site=data.get(CONF_SITE, DEFAULT_SITE),
         verify_ssl=data.get(CONF_VERIFY_SSL, False),
+        port=data.get(CONF_PORT, 443),
     )
 
     try:

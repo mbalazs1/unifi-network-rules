@@ -22,13 +22,20 @@ class UDMAPI:
     """Base class for UniFi Dream Machine API."""
 
     def __init__(
-        self, host: str, username: str, password: str, site: str = DEFAULT_SITE, verify_ssl: bool | str = False
+        self,
+        host: str,
+        username: str,
+        password: str,
+        site: str = DEFAULT_SITE,
+        verify_ssl: bool | str = False,
+        port: int = 443,
     ):
         """Initialize the UDMAPI."""
         self.host = host
         self.username = username
         self.password = password
         self.site = site
+        self.port = port
 
         # Ensure verify_ssl is properly set
         if isinstance(verify_ssl, str) and verify_ssl.lower() in ("false", "no", "0"):
